@@ -8,19 +8,18 @@ Exemplo:
 ´´´php
 $correio = new Correios;
 
-$address['cep_origem'] = $cep_origem;
+$address["cep_origem"] = $cep_origem;
 
 if (Yii::app()->user->isGuest) {
-  $address['cep_destino'] = $cep;
+	$address["cep_destino"] = $cep;
 } else {
-	$address['cep_destino'] = Yii::app()->user->cep;
+	$address["cep_destino"] = Yii::app()->user->cep;
 }
 
 try {
 	$rows = $correio->getQuote($address);
-	$this->renderPartial('index', array('rows' => $rows));
+	$this->renderPartial("index", array("rows" => $rows));
 } catch (Exception $exc) {
-	echo '<pre>';
 	echo $exc->getTraceAsString();
 }
 ´´´
@@ -30,14 +29,14 @@ O funcionamento de buscar os produtos do carrinho:
 class Shop {
 
     public static function getCartContent() {
-        if (is_string(Yii::app()->user->getState('carrinho')))
-            return json_decode(Yii::app()->user->getState('carrinho'), true);
+        if (is_string(Yii::app()->user->getState("carrinho")))
+            return json_decode(Yii::app()->user->getState("carrinho"), true);
         else
-            return Yii::app()->user->getState('carrinho');
+            return Yii::app()->user->getState("carrinho");
     }
 
     public static function setCartContent($cart) {
-        return Yii::app()->user->setState('carrinho', json_encode($cart));
+        return Yii::app()->user->setState("carrinho", json_encode($cart));
     }
 }
 ´´´
@@ -61,11 +60,11 @@ class CarrinhoController extends Controller {
         }
 
         if ($new)
-            $cart[] = array('id' => $id, 'quant' => 1);
+            $cart[] = array("id" => $id, "quant" => 1);
 
         Shop::setCartcontent($cart);
 
-        $this->redirect(Yii::app()->createAbsoluteUrl('cart'));
+        $this->redirect(Yii::app()->createAbsoluteUrl("cart"));
     }
 	
 }
