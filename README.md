@@ -4,8 +4,7 @@ Biblioteca do Correios
 Está biblioteca está configurada para o funcionamento correto no Yii Framework.
 
 Exemplo:
-
-´´´php
+```php
 $correio = new Correios;
 
 $address["cep_origem"] = $cep_origem;
@@ -22,10 +21,10 @@ try {
 } catch (Exception $exc) {
 	echo $exc->getTraceAsString();
 }
-´´´
+```
 
 O funcionamento de buscar os produtos do carrinho:
-´´´php
+```php
 class Shop {
 
     public static function getCartContent() {
@@ -39,10 +38,10 @@ class Shop {
         return Yii::app()->user->setState("carrinho", json_encode($cart));
     }
 }
-´´´
+```
 
 Controller que adiciona os produtos a sessão:
-´´´php
+```php
 class CarrinhoController extends Controller {
 
     public function actionAdd($id) {
@@ -68,4 +67,4 @@ class CarrinhoController extends Controller {
     }
 	
 }
-´´´
+```
