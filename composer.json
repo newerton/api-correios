@@ -1,0 +1,22 @@
+{
+    "name": "newerton/api-correios",
+    "type": "library",
+    "description": "Biblioteca para PHP",
+    "keywords": ["correios","pac", "sedex"],
+    "homepage": "https://github.com/newerton/api-correios",
+    "license": "Apache 2.0",
+    "authors": [
+        {
+            "name": "Newerton Vargas de Araujo",
+            "email": "contato@newerton.com.br",
+            "homepage": "http://www.newerton.com.br/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl" : "*"
+    },
+    "autoload": {
+        "classmap": ["Correios.php"]
+    }
+}
