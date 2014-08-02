@@ -26,7 +26,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-class CorreiosShipping {
+class CorreiosShipping
+{
     /*
      * URL de consulta
      * @const string
@@ -124,25 +125,27 @@ class CorreiosShipping {
 
     /*
      * Construtor, define o c�digo e senha de autentica��o no webservice
-     * @param string $authCode
-     * @param string $authPass
+     * @param  string $authCode
+     * @param  string $authPass
      * @return void
      * @access public
      */
 
-    public function __construct($authCode = null, $authPass = null) {
+    public function __construct($authCode = null, $authPass = null)
+    {
         $this->authCode = $authCode;
         $this->authPass = $authPass;
     }
 
     /*
      * Setter de servi�o/m�todo de envio
-     * @param string $service
+     * @param  string $service
      * @return void
      * @access public
      */
 
-    public function setService($service) {
+    public function setService($service)
+    {
         $servicesArr = array(
             'pacSC' => 41106, //PAC sem contrato
             'pacCC' => 41068, //PAC com contrato
@@ -171,12 +174,13 @@ class CorreiosShipping {
 
     /*
      * Setter de CEP de origem
-     * @param string $zipcode
+     * @param  string $zipcode
      * @return void
      * @access public
      */
 
-    public function setZipFrom($zipcode) {
+    public function setZipFrom($zipcode)
+    {
         $zipcode = preg_replace('/[^0-9]/', '', $zipcode);
 
         if (strlen($zipcode) != 8) {
@@ -188,12 +192,13 @@ class CorreiosShipping {
 
     /*
      * Setter de CEP de destino
-     * @param string $zipcode
+     * @param  string $zipcode
      * @return void
      * @access public
      */
 
-    public function setZipTo($zipcode) {
+    public function setZipTo($zipcode)
+    {
         $zipcode = preg_replace('/[^0-9]/', '', $zipcode);
 
         if (strlen($zipcode) != 8) {
@@ -205,23 +210,25 @@ class CorreiosShipping {
 
     /*
      * Setter de peso do item
-     * @param string $value	Valor em gramas
+     * @param  string $value Valor em gramas
      * @return void
      * @access public
      */
 
-    public function setItemWeight($value) {
+    public function setItemWeight($value)
+    {
         $this->itemWeight = $value / 1000;
     }
 
     /*
      * Setter de formato do item (pacote ou rolo/prisma)
-     * @param int $value
+     * @param  int  $value
      * @return void
      * @access public
      */
 
-    public function setItemForm($value) {
+    public function setItemForm($value)
+    {
         if (in_array($value, array(1, 2))) {
             $this->itemForm = $value;
         } else {
@@ -231,12 +238,13 @@ class CorreiosShipping {
 
     /*
      * Setter de comprimento do item, em cent�metros
-     * @param int $value
+     * @param  int  $value
      * @return void
      * @access public
      */
 
-    public function setItemLength($value) {
+    public function setItemLength($value)
+    {
         if (is_int($value)) {
             $this->itemLength = $value;
         } else {
@@ -246,12 +254,13 @@ class CorreiosShipping {
 
     /*
      * Setter de altura do item, em cent�metros
-     * @param int $value
+     * @param  int  $value
      * @return void
      * @access public
      */
 
-    public function setItemHeight($value) {
+    public function setItemHeight($value)
+    {
         if (is_int($value)) {
             $this->itemHeight = $value;
         } else {
@@ -261,12 +270,13 @@ class CorreiosShipping {
 
     /*
      * Setter de largura do item, em cent�metros
-     * @param int $value
+     * @param  int  $value
      * @return void
      * @access public
      */
 
-    public function setItemWidth($value) {
+    public function setItemWidth($value)
+    {
         if (is_int($value)) {
             $this->itemWidth = $value;
         } else {
@@ -277,12 +287,13 @@ class CorreiosShipping {
     /*
      * Setter de diâmetro do item, em centímetros
      * Utilizado somente no cálculo de frete para rolos ou prismas
-     * @param int $value
+     * @param  int  $value
      * @return void
      * @access public
      */
 
-    public function setItemDiameter($value) {
+    public function setItemDiameter($value)
+    {
         if (is_int($value)) {
             $this->itemDiameter = $value;
         } else {
@@ -292,13 +303,14 @@ class CorreiosShipping {
 
     /*
      * Setter de opções/serviços adicionais
-     * @param string $option
-     * @param string $value
+     * @param  string $option
+     * @param  string $value
      * @return void
      * @access public
      */
 
-    public function setOption($option, $value) {
+    public function setOption($option, $value)
+    {
         if (isset($this->options[$option])) {
             $this->options[$option] = $value;
         } else {
@@ -312,7 +324,8 @@ class CorreiosShipping {
      * @access private
      */
 
-    private function checkPackageDimensions() {
+    private function checkPackageDimensions()
+    {
         if ($this->itemForm == 1) {
             if (($this->itemLength < 16)
                     || ($this->itemLength < 11)
@@ -336,7 +349,8 @@ class CorreiosShipping {
      * @access public
      */
 
-    public function request() {
+    public function request()
+    {
         $this->checkPackageDimensions();
 
         $param = array(
@@ -372,7 +386,8 @@ class CorreiosShipping {
      * @access public
      */
 
-    public function getResult() {
+    public function getResult()
+    {
         return $this->result;
     }
 
@@ -382,13 +397,13 @@ class CorreiosShipping {
      * @access public
      */
 
-    public function getResultAsArray() {
+    public function getResultAsArray()
+    {
         foreach ($this->result as $k => $v) {
             $arr[$k] = $v;
         }
+
         return $arr;
     }
 
 }
-
-?>

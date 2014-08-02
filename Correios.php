@@ -1,7 +1,7 @@
 <?php
 
-class Correios {
-
+class Correios
+{
     private $valor_max = 10000;  // máximo valor declarado, em reais
     private $altura_max = 105;   // todas as medidas em cm
     private $largura_max = 105;
@@ -35,10 +35,10 @@ class Correios {
     private $correiosUtilizar = array('PAC', 'Sedex');
 
     // função responsável pelo retorno à loja dos valores finais dos valores dos fretes
-    public function getQuote($address) {
-
+    public function getQuote($address)
+    {
         $method_data = array();
-        
+
         // anulando a sessão do correios
         Yii::app()->user->setState('correios', null);
 
@@ -69,7 +69,7 @@ class Correios {
 
                 if (is_numeric(trim(textoestatico('correios_adicional')))) {
                     $valor_adicional = trim(textoestatico('correios_adicional'));
-                } else if (preg_match('/%/', trim(textoestatico('correios_adicional')))) {
+                } elseif (preg_match('/%/', trim(textoestatico('correios_adicional')))) {
                     $valor_adicional = $this->quote_data[$codigo]['cost'] * number_format((preg_replace('/%/', '', trim(textoestatico('correios_adicional'))) / 100), 2);
                 } else {
                     $valor_adicional = 0;
@@ -114,8 +114,8 @@ class Correios {
     }
 
     // obtém os dados dos fretes para os produtos da caixa
-    private function setQuoteData($caixa) {
-
+    private function setQuoteData($caixa)
+    {
         // obtém o valor total da caixa
         $total_caixa = $this->getTotalCaixa($caixa['produtos']);
         $total_caixa = ($total_caixa > $this->valor_max) ? $this->valor_max : $total_caixa;
@@ -136,7 +136,7 @@ class Correios {
                 $cost = (strtolower(substr(textoestatico('correios_aviso_recebimento'), 0, 1)) == 'n') ? ($cost - $servico['ValorAvisoRecebimento']) : $cost;
                 $cost = (strtolower(substr(textoestatico('correios_mao_propria'), 0, 1)) == 'n') ? ($cost - $servico['ValorMaoPropria']) : $cost;
 
-                // o valor do frete para a caixa atual é somado ao valor total já calculado para outras caixas 
+                // o valor do frete para a caixa atual é somado ao valor total já calculado para outras caixas
                 if (isset($this->quote_data[$servico['Codigo']])) {
                     $cost += $this->quote_data[$servico['Codigo']]['cost'];
                 }
@@ -165,8 +165,8 @@ class Correios {
     }
 
     // prepara a url de chamada ao site dos Correios
-    private function setUrl($peso, $valor, $comp, $larg, $alt) {
-
+    private function setUrl($peso, $valor, $comp, $larg, $alt)
+    {
         $url = "http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?";
         $url .= "nCdEmpresa=" . $this->esedex_codigo;
         $url .= "&sDsSenha=" . $this->esedex_senha;
@@ -188,8 +188,8 @@ class Correios {
     }
 
     // conecta ao sites dos Correios e obtém o arquivo XML com os dados do frete
-    private function getXML($url) {
-
+    private function getXML($url)
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -208,9 +208,9 @@ class Correios {
         return $result;
     }
 
-    // faz a chamada e lê os dados no arquivo XML retornado pelos Correios 
-    public function getServicos($peso, $valor, $comp, $larg, $alt) {
-
+    // faz a chamada e lê os dados no arquivo XML retornado pelos Correios
+    public function getServicos($peso, $valor, $comp, $larg, $alt)
+    {
         $dados = array();
 
         // troca o separador decimal de ponto para vírgula nos dados a serem enviados para os Correios
@@ -259,28 +259,33 @@ class Correios {
                 }
             }
         }
+
         return $dados;
     }
 
     // retorna a dimensão em centímetros
-    private function getDimensaoEmCm($unidade, $dimensao) {
+    private function getDimensaoEmCm($unidade, $dimensao)
+    {
         if ($unidade == 'mm' && is_numeric($dimensao)) {
             return $dimensao / 10;
         }
+
         return $dimensao;
     }
 
     // retorna o peso em quilogramas
-    private function getPesoEmKg($unidade, $peso) {
+    private function getPesoEmKg($unidade, $peso)
+    {
         if ($unidade == 'g' && is_numeric($peso)) {
             return ($peso / 1000);
         }
+
         return $peso;
     }
 
     // seleciona o maior peso entre o da balança e o cúbico com base na regra dos Correios
-    private function getMaiorPeso($pesoNormal, $pesoCubico) {
-
+    private function getMaiorPeso($pesoNormal, $pesoCubico)
+    {
         if ($pesoCubico <= $this->peso_limite) {
             return $pesoNormal;
         } else {
@@ -288,11 +293,12 @@ class Correios {
         }
     }
 
-    // pré-validação das dimensões e peso do produto 
-    private function validar($produto) {
-
+    // pré-validação das dimensões e peso do produto
+    private function validar($produto)
+    {
         if (!is_numeric($produto->height) || !is_numeric($produto->width) || !is_numeric($produto->length) || !is_numeric($produto->weight)) {
             Yii::log('Correios: [Valores da caixa]' . $produto->name, CLogger::LEVEL_INFO);
+
             return false;
         }
 
@@ -303,17 +309,20 @@ class Correios {
 
         if ($altura > $this->altura_max || $largura > $this->largura_max || $comprimento > $this->comprimento_max) {
             Yii::log('Correios: [Limite da caixa]' . sprintf($this->comprimento_max, $this->largura_max, $this->altura_max, $produto->name, $comprimento, $largura, $altura), CLogger::LEVEL_INFO);
+
             return false;
         }
 
         $soma_dim = $altura + $largura + $comprimento;
         if ($soma_dim > $this->soma_dim_max) {
             Yii::log('Correios: [Limite da caixa]' . sprintf($this->comprimento_max, $this->largura_max, $this->altura_max, $produto->name, $comprimento, $largura, $altura), CLogger::LEVEL_INFO);
+
             return false;
         }
 
         if ($peso > $this->peso_max) {
             Yii::log('Correios: [Limite da caixa]' . sprintf($this->peso_max, $produto->name, $peso), CLogger::LEVEL_INFO);
+
             return false;
         }
 
@@ -322,8 +331,8 @@ class Correios {
 
     // 'empacota' os produtos do carrinho em caixas com dimensões e peso dentro dos limites definidos pelos Correios
     // algoritmo desenvolvido por: Thalles Cardoso <thallescard@gmail.com>
-    private function organizarEmCaixas($produtos) {
-
+    private function organizarEmCaixas($produtos)
+    {
         $tipo = !Yii::app()->user->isGuest ? Clientetipo::model()->findByPk(Yii::app()->user->codclientetipo) : 0;
 
         $caixas = array();
@@ -402,7 +411,7 @@ class Correios {
                         // aumenta-se o peso da caixa
                         $caixas[$cx_num]['weight'] += $prod_copy->weight;
 
-                        // ajusta-se as dimensões da nova caixa 
+                        // ajusta-se as dimensões da nova caixa
                         if ($cabe_do_lado) {
                             $caixas[$cx_num]['width'] += $prod_copy->width;
 
@@ -411,7 +420,7 @@ class Correios {
 
                             // a caixa vai ficar com o comprimento do maior produto que estiver nela
                             $caixas[$cx_num]['length'] = max($caixas[$cx_num]['length'], $prod_copy->length);
-                        } else if ($cabe_no_fundo) {
+                        } elseif ($cabe_no_fundo) {
                             $caixas[$cx_num]['length'] += $prod_copy->length;
 
                             // a caixa vai ficar com a altura do maior produto que estiver nela
@@ -419,7 +428,7 @@ class Correios {
 
                             // a caixa vai ficar com a largura do maior produto que estiver nela
                             $caixas[$cx_num]['width'] = max($caixas[$cx_num]['width'], $prod_copy->width);
-                        } else if ($cabe_em_cima) {
+                        } elseif ($cabe_em_cima) {
                             $caixas[$cx_num]['height'] += $prod_copy->height;
 
                             //a caixa vai ficar com a altura do maior produto que estiver nela
@@ -435,29 +444,32 @@ class Correios {
                         $i--;
                     }
                 }
-                // produto não tem as dimensões/peso válidos então abandona sem calcular o frete. 
+                // produto não tem as dimensões/peso válidos então abandona sem calcular o frete.
                 else {
                     $caixas = array();
                     break 2;  // sai dos dois foreach
                 }
             }
         }
+
         return $caixas;
     }
 
     // retorna o valor total dos prodtos na caixa
-    private function getTotalCaixa($products) {
+    private function getTotalCaixa($products)
+    {
         $total = 0;
 
         foreach ($products as $product) {
             //$total += $this->currency->format($this->tax->calculate($product['total'], $product['tax_class_id'], $this->config->get('config_tax')), '', '', false);
             $total += $product->total;
         }
+
         return $total;
     }
 
-    private function ajustarDimensoes($caixa) {
-
+    private function ajustarDimensoes($caixa)
+    {
         // a altura não pode ser maior que o comprimento, assim inverte-se as dimensões
         $height = $caixa['height'];
         $width = $caixa['width'];
